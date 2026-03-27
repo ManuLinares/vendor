@@ -414,7 +414,7 @@ jobs:
           TARGET_BASE="upload_stage/libraries/tinyfiledialogs.c3l"
           mkdir -p "$TARGET_BASE/$TARGET_DIR"
 
-          curl -fSL https://sourceforge.net/projects/tinyfiledialogs/files/tinyfiledialogs-current.zip/download -o tinyfd.zip
+          curl -fSL --retry 5 --retry-delay 30 https://sourceforge.net/projects/tinyfiledialogs/files/tinyfiledialogs-current.zip/download -o tinyfd.zip
           unzip -j tinyfd.zip
 
           if [ "${{ runner.os }}" == "Windows" ]; then
