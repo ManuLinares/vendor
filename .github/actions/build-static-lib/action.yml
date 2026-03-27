@@ -18,7 +18,6 @@ inputs:
   os: { required: true }
   # Post-Processing Options
   after_build: { required: false, default: "" }
-  install_prefix: { required: false, default: "" }
 
 runs:
   using: "composite"
@@ -37,10 +36,8 @@ runs:
       id: build-cache
       uses: actions/cache@v5
       with:
-        path: |
-          upload_stage/
-          ${{ inputs.install_prefix }}
-        key: static-lib-v11-${{ inputs.name }}-${{ inputs.os }}-${{ inputs.tag }}
+        path: upload_stage/
+        key: static-lib-v12-${{ inputs.name }}-${{ inputs.os }}-${{ inputs.tag }}
 
     - name: Build and Package
       if: steps.build-cache.outputs.cache-hit != 'true'
@@ -89,20 +86,9 @@ runs:
           cd build_src
           git submodule update --init --recursive
           mkdir -p c3_build_temp && cd c3_build_temp
-          
-          # Prepare install prefix if requested
-          EXTRA_FLAGS=""
-          if [ -n "${{ inputs.install_prefix }}" ]; then
-             mkdir -p "../../${{ inputs.install_prefix }}"
-             EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=../../${{ inputs.install_prefix }}"
-          fi
 
-          cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release $EXTRA_FLAGS ${{ inputs.cmake_flags }} "../${{ inputs.src_path }}"
+          cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release ${{ inputs.cmake_flags }} "../${{ inputs.src_path }}"
           cmake --build . --config Release --parallel 4
-          
-          if [ -n "${{ inputs.install_prefix }}" ]; then
-             cmake --install . --config Release
-          fi
 
           find . -type f \( -name "*.a" -o -name "*.lib" \) -exec cp {} "../../$TARGET_BASE/$TARGET_DIR/" \;
           cd ../..

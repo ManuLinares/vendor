@@ -194,8 +194,9 @@ jobs:
           tag: release-3.4.2
           c3l: sdl3.c3l
           cmake_flags: "-DSDL_TESTS=OFF -DSDL_DISABLE_INSTALL=OFF"
-          install_prefix: "sdl3_install"
           os: ${{ matrix.os }}
+          after_build: |
+            cmake --install build_src/c3_build_temp --config Release --prefix "$GITHUB_WORKSPACE/sdl3_install"
       - name: Upload sdl3 Installation Artifact
         uses: actions/upload-artifact@v6
         with:
