@@ -243,6 +243,9 @@ jobs:
         with:
           name: sdl3-install-${{ matrix.os }}
           path: sdl3_install
+      - name: Debug - list sdl3_install contents
+        shell: bash
+        run: find sdl3_install/ -name "*.cmake" | sort
       - name: Build sdl3_ttf
         uses: ./.github/actions/build-static-lib
         with:
