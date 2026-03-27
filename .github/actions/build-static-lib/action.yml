@@ -61,6 +61,13 @@ runs:
         TARGET_BASE="upload_stage/libraries/${{ inputs.c3l }}"
         mkdir -p "$TARGET_BASE/$TARGET_DIR"
 
+        # Resolve prefix_path to absolute NOW, while still at workspace root
+        PREFIX_FLAG=""
+        if [ -n "${{ inputs.prefix_path }}" ]; then
+           ABS_PREFIX=$(cd "${{ inputs.prefix_path }}" && pwd)
+           PREFIX_FLAG="-DCMAKE_PREFIX_PATH=$ABS_PREFIX"
+        fi
+
         # Handle pre-compiled binaries if URLs are provided
         BIN_URL=""
         BIN_LIB=""
@@ -96,13 +103,6 @@ runs:
           if [ -n "${{ inputs.install_prefix }}" ]; then
              mkdir -p "../../${{ inputs.install_prefix }}"
              EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=../../${{ inputs.install_prefix }}"
-          fi
-
-          # Resolve prefix_path to absolute if provided
-          PREFIX_FLAG=""
-          if [ -n "${{ inputs.prefix_path }}" ]; then
-             ABS_PREFIX=$(cd "${{ inputs.prefix_path }}" && pwd)
-             PREFIX_FLAG="-DCMAKE_PREFIX_PATH=$ABS_PREFIX"
           fi
 
           cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release $EXTRA_FLAGS $PREFIX_FLAG ${{ inputs.cmake_flags }} "../${{ inputs.src_path }}"
