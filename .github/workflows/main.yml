@@ -369,8 +369,10 @@ jobs:
 
           if [ "${{ runner.os }}" == "Windows" ]; then
             # Build with MSVC to match raylib5 binary
-            cl /c /O2 /I"build_raylib/src" /I"build_raygui/src" raygui_impl.c
-            lib raygui_impl.obj /out:"$LIB_NAME"
+            # Use MSYS2_ARG_CONV_EXCL to prevent Git Bash from 'fixing' the / flags
+            export MSYS2_ARG_CONV_EXCL="*"
+            cl -c -O2 -Ibuild_raylib/src -Ibuild_raygui/src raygui_impl.c
+            lib raygui_impl.obj -out:"$LIB_NAME"
           else
             gcc -c -O2 -I"build_raylib/src" -I"build_raygui/src" raygui_impl.c -o raygui_impl.o
             ar rcs "$LIB_NAME" raygui_impl.o
