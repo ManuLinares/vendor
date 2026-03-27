@@ -40,7 +40,7 @@ runs:
         path: |
           upload_stage/
           ${{ inputs.install_prefix }}
-        key: static-lib-v6-${{ inputs.name }}-${{ inputs.os }}-${{ inputs.tag }}
+        key: static-lib-v7-${{ inputs.name }}-${{ inputs.os }}-${{ inputs.tag }}
 
     - name: Build and Package
       if: steps.build-cache.outputs.cache-hit != 'true'
