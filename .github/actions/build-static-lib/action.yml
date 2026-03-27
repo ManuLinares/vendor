@@ -32,15 +32,7 @@ runs:
           libglu1-mesa-dev libxext-dev libxfixes-dev libxss-dev libxtst-dev libasound2-dev \
           libpulse-dev libjack-dev libsndio-dev mesa-common-dev xorg-dev libxkbcommon-x11-dev
 
-    - name: Cache Static Library
-      id: build-cache
-      uses: actions/cache@v5
-      with:
-        path: upload_stage/
-        key: static-lib-v12-${{ inputs.name }}-${{ inputs.os }}-${{ inputs.tag }}
-
     - name: Build and Package
-      if: steps.build-cache.outputs.cache-hit != 'true'
       shell: bash
       env:
         HOOK_SCRIPT: ${{ inputs.after_build }}
