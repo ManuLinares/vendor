@@ -73,7 +73,11 @@ jobs:
           cmake_flags: "-DSDL_TESTS=OFF -DSDL_DISABLE_INSTALL=OFF"
           os: ${{ matrix.os }}
           after_build: |
-            cmake --install build_src/c3_build_temp --config Release --prefix "$GITHUB_WORKSPACE/sdl3_install"
+             # Normalize SDL3-static.lib -> SDL3.lib on Windows
+             if [ "${{ runner.os }}" == "Windows" ]; then
+               find "upload_stage/" -type f -name "SDL3-static.lib" -execdir mv {} "SDL3.lib" \; || true
+             fi
+             cmake --install build_src/c3_build_temp --config Release --prefix "$GITHUB_WORKSPACE/sdl3_install"
       - name: Upload sdl3 Installation Artifact
         uses: actions/upload-artifact@v6
         with:
