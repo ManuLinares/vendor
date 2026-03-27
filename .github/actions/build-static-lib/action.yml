@@ -40,11 +40,13 @@ runs:
         path: |
           upload_stage/
           ${{ inputs.install_prefix }}
-        key: static-lib-v7-${{ inputs.name }}-${{ inputs.os }}-${{ inputs.tag }}
+        key: static-lib-v8-${{ inputs.name }}-${{ inputs.os }}-${{ inputs.tag }}
 
     - name: Build and Package
       if: steps.build-cache.outputs.cache-hit != 'true'
       shell: bash
+      env:
+        HOOK_SCRIPT: ${{ inputs.after_build }}
       run: |
         set -x
         if [ "${{ runner.os }}" == "Windows" ]; then
@@ -107,8 +109,9 @@ runs:
         fi
 
         # After Build Hook
-        if [ -n "${{ inputs.after_build }}" ]; then
-           eval "${{ inputs.after_build }}"
+        if [ -n "$HOOK_SCRIPT" ]; then
+           printf "%s" "$HOOK_SCRIPT" > run_hook.sh
+           bash run_hook.sh
         fi
 
     - name: Upload Artifact
