@@ -414,8 +414,8 @@ jobs:
           TARGET_BASE="upload_stage/libraries/tinyfiledialogs.c3l"
           mkdir -p "$TARGET_BASE/$TARGET_DIR"
 
-          git clone https://github.com/native-toolkit/tinyfiledialogs.git -b master build_src
-          cd build_src
+          curl -fSL https://sourceforge.net/projects/tinyfiledialogs/files/tinyfiledialogs-current.zip/download -o tinyfd.zip
+          unzip -j tinyfd.zip
 
           if [ "${{ runner.os }}" == "Windows" ]; then
             export MSYS2_ARG_CONV_EXCL="*"
@@ -425,7 +425,7 @@ jobs:
             gcc -c -O2 tinyfiledialogs.c -o tinyfiledialogs.o
             ar rcs "$LIB_NAME" tinyfiledialogs.o
           fi
-          cp "$LIB_NAME" "../$TARGET_BASE/$TARGET_DIR/"
+          cp "$LIB_NAME" "$TARGET_BASE/$TARGET_DIR/"
 
       - name: Upload tinyfiledialogs Artifact
         uses: actions/upload-artifact@v6
