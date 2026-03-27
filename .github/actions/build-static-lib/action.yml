@@ -16,7 +16,6 @@ inputs:
   win_url: { required: false }
   win_lib: { required: false }
   os: { required: true }
-  prefix_path: { required: false, default: "" }
   # Post-Processing Options
   after_build: { required: false, default: "" }
   install_prefix: { required: false, default: "" }
@@ -41,7 +40,7 @@ runs:
         path: |
           upload_stage/
           ${{ inputs.install_prefix }}
-        key: static-lib-v10-${{ inputs.name }}-${{ inputs.os }}-${{ inputs.tag }}
+        key: static-lib-v11-${{ inputs.name }}-${{ inputs.os }}-${{ inputs.tag }}
 
     - name: Build and Package
       if: steps.build-cache.outputs.cache-hit != 'true'
@@ -60,13 +59,6 @@ runs:
 
         TARGET_BASE="upload_stage/libraries/${{ inputs.c3l }}"
         mkdir -p "$TARGET_BASE/$TARGET_DIR"
-
-        # Resolve prefix_path to absolute NOW, while still at workspace root
-        PREFIX_FLAG=""
-        if [ -n "${{ inputs.prefix_path }}" ]; then
-           ABS_PREFIX=$(cd "${{ inputs.prefix_path }}" && pwd)
-           PREFIX_FLAG="-DCMAKE_PREFIX_PATH=$ABS_PREFIX"
-        fi
 
         # Handle pre-compiled binaries if URLs are provided
         BIN_URL=""
@@ -105,7 +97,7 @@ runs:
              EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=../../${{ inputs.install_prefix }}"
           fi
 
-          cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release $EXTRA_FLAGS $PREFIX_FLAG ${{ inputs.cmake_flags }} "../${{ inputs.src_path }}"
+          cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release $EXTRA_FLAGS ${{ inputs.cmake_flags }} "../${{ inputs.src_path }}"
           cmake --build . --config Release --parallel 4
           
           if [ -n "${{ inputs.install_prefix }}" ]; then

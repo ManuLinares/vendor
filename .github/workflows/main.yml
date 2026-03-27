@@ -222,8 +222,7 @@ jobs:
           repo: https://github.com/libsdl-org/SDL_image.git
           tag: release-3.4.0
           c3l: sdl3_image.c3l
-          cmake_flags: "-DSDLIMAGE_SAMPLES=OFF -DSDLIMAGE_TESTS=OFF -DSDLIMAGE_AVIF=OFF -DSDLIMAGE_VENDORED=ON"
-          prefix_path: "sdl3_install"
+          cmake_flags: "-DSDLIMAGE_SAMPLES=OFF -DSDLIMAGE_TESTS=OFF -DSDLIMAGE_AVIF=OFF -DSDLIMAGE_VENDORED=ON -DCMAKE_PREFIX_PATH=$GITHUB_WORKSPACE/sdl3_install"
           os: ${{ matrix.os }}
           after_build: |
              # Normalize SDL3_image-static.lib -> SDL3_image.lib on Windows
@@ -251,8 +250,7 @@ jobs:
           repo: https://github.com/libsdl-org/SDL_ttf.git
           tag: release-3.2.2
           c3l: sdl3_ttf.c3l
-          cmake_flags: "-DSDLTTF_SAMPLES=OFF -DSDLTTF_VENDORED=ON"
-          prefix_path: "sdl3_install"
+          cmake_flags: "-DSDLTTF_SAMPLES=OFF -DSDLTTF_VENDORED=ON -DCMAKE_PREFIX_PATH=$GITHUB_WORKSPACE/sdl3_install"
           os: ${{ matrix.os }}
           after_build: |
              # Normalize SDL3_ttf-static.lib -> SDL3_ttf.lib on Windows
