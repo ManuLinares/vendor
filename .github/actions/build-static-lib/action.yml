@@ -16,6 +16,7 @@ inputs:
   win_url: { required: false }
   win_lib: { required: false }
   os: { required: true }
+  prefix_path: { required: false, default: "" }
   # Post-Processing Options
   after_build: { required: false, default: "" }
   install_prefix: { required: false, default: "" }
@@ -97,7 +98,14 @@ runs:
              EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=../../${{ inputs.install_prefix }}"
           fi
 
-          cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release $EXTRA_FLAGS ${{ inputs.cmake_flags }} "../${{ inputs.src_path }}"
+          # Resolve prefix_path to absolute if provided
+          PREFIX_FLAG=""
+          if [ -n "${{ inputs.prefix_path }}" ]; then
+             ABS_PREFIX=$(cd "${{ inputs.prefix_path }}" && pwd)
+             PREFIX_FLAG="-DCMAKE_PREFIX_PATH=$ABS_PREFIX"
+          fi
+
+          cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release $EXTRA_FLAGS $PREFIX_FLAG ${{ inputs.cmake_flags }} "../${{ inputs.src_path }}"
           cmake --build . --config Release --parallel 4
           
           if [ -n "${{ inputs.install_prefix }}" ]; then
